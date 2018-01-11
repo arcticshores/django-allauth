@@ -27,6 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from . import app_settings
 from ..compat import is_authenticated, reverse, validate_password
+from .signals import user_auth_failed
 from ..utils import (
     build_absolute_uri,
     email_address_exists,
@@ -502,7 +503,7 @@ class DefaultAccountAdapter(object):
         dt = timezone.now()
         data.append(time.mktime(dt.timetuple()))
         cache.set(cache_key, data, app_settings.LOGIN_ATTEMPTS_TIMEOUT)
-
+        user_auth_failed.send(sender=self.__class__, request=request)
 
 def get_adapter(request=None):
     return import_attribute(app_settings.ADAPTER)(request)

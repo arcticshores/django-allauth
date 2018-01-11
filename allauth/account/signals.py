@@ -1,6 +1,7 @@
 from django.dispatch import Signal
 
 
+user_auth_failed = Signal(providing_args=["request"])
 user_logged_in = Signal(providing_args=["request", "user"])
 user_logged_out = Signal(providing_args=["request", "user"])
 
