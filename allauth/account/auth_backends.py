@@ -19,6 +19,15 @@ class AuthenticationBackend(ModelBackend):
                 ret = self._authenticate_by_username(**credentials)
         else:
             ret = self._authenticate_by_username(**credentials)
+
+        # Django-allauth does *not* do this check, despite Django doing it.
+        # It checks for deactivated accounts on the front-end login routine
+        # so that it can display a friendly "inactive account" page.
+        # We don't require this page - we explicitly require we don't show
+        # this page to avoid revealing that some accounts exist.
+        if not self.user_can_authenticate(ret):
+            ret = None
+
         return ret
 
     def _authenticate_by_username(self, **credentials):
